@@ -1,5 +1,4 @@
 ---
-#timezone:               'America/Los_Angeles'
 symlinks:
   - owner:              'root'
     group:              'root'
