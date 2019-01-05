@@ -7,6 +7,12 @@ symlinks:
 install_packages:
   - 'cron'
   - 'ntp'
+template_files:
+  - owner:              'root'
+    group:              'root'
+    mode:               '0644'
+    src:                'templates/ntp.conf.j2'
+    dest:               '/etc/ntp.conf'
 enable_services:        "{{ install_packages }}"
 start_services:         "{{ install_packages }}"
 restart_services:       "{{ install_packages }}"
