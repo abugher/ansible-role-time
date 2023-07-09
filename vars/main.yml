@@ -6,7 +6,7 @@ symlinks:
     dest:               '/etc/localtime'
 install_packages:
   - 'cron'
-  - 'ntp'
+  - 'openntpd'
 template_files:
   - owner:              'root'
     group:              'root'
