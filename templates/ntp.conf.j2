@@ -1,9 +1,15 @@
+{% if inventory_hostname in groups['time-server'] %}
+interface listen all
+{% else %}
+interface ignore all
+interface listen lo
+{% endif %}
 driftfile /var/lib/ntp/ntp.drift
 statistics loopstats peerstats clockstats
 filegen loopstats file loopstats type day enable
 filegen peerstats file peerstats type day enable
 filegen clockstats file clockstats type day enable
-server {{ time_server }}
+server {{ groups['time-server'][0] }}.{{ domain }}
 pool pool.ntp.org iburst
 pool 0.debian.pool.ntp.org iburst
 pool 1.debian.pool.ntp.org iburst

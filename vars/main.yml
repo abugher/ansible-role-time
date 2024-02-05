@@ -1,9 +1,4 @@
 ---
-symlinks:
-  - owner:              'root'
-    group:              'root'
-    src:                "/usr/share/zoneinfo/{{ timezone }}"
-    dest:               '/etc/localtime'
 install_packages:
   - 'cron'
   - 'ntpsec'
@@ -17,6 +12,15 @@ template_files:
     group:              'root'
     mode:               '0644'
     src:                'templates/ntp.conf.j2'
+    dest:               '/etc/ntpsec/ntp.conf'
+symlinks:
+  - owner:              'root'
+    group:              'root'
+    src:                "/usr/share/zoneinfo/{{ timezone }}"
+    dest:               '/etc/localtime'
+  - owner:              'root'
+    group:              'root'
+    src:                '/etc/ntpsec/ntp.conf'
     dest:               '/etc/ntp.conf'
 enable_services:        "{{ install_packages }}"
 start_services:         "{{ install_packages }}"
