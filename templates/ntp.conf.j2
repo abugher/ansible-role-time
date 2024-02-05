@@ -1,23 +1,39 @@
-{% if inventory_hostname in groups['time-server'] %}
+## Access Control
+
+# Always listen for upstream server(s).
 interface listen all
+
+{% if inventory_hostname in groups['time-server'] %}
+# Server:  Allow service and query packets from anywhere:
+restrict default nomodify nopeer limited
 {% else %}
-interface ignore all
-interface listen lo
+# Client:  Allow service packets from upstream server(s):
+restrict default ignore
+restrict {{ groups['time-server'][0] }}.{{ domain }} nomodify nopeer noquery limited
+restrict pool.ntp.org nomodify nopeer noquery limited
+restrict 0.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict 1.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict 2.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict 3.debian.pool.ntp.org nomodify nopeer noquery limited
 {% endif %}
-driftfile /var/lib/ntp/ntp.drift
-statistics loopstats peerstats clockstats
-filegen loopstats file loopstats type day enable
-filegen peerstats file peerstats type day enable
-filegen clockstats file clockstats type day enable
+
+# Unrestrict local access:
+restrict 127.0.0.1
+restrict ::1
+
+
+## Upstream server(s):
 server {{ groups['time-server'][0] }}.{{ domain }}
 pool pool.ntp.org iburst
 pool 0.debian.pool.ntp.org iburst
 pool 1.debian.pool.ntp.org iburst
 pool 2.debian.pool.ntp.org iburst
 pool 3.debian.pool.ntp.org iburst
-restrict -4 default kod notrap nomodify nopeer noquery limited
-restrict -6 default kod notrap nomodify nopeer noquery limited
-restrict 127.0.0.1
-restrict ::1
-# Needed for adding pool entries:
-restrict source notrap nomodify noquery
+
+
+## Other options:
+driftfile /var/lib/ntp/ntp.drift
+statistics loopstats peerstats clockstats
+filegen loopstats file loopstats type day enable
+filegen peerstats file peerstats type day enable
+filegen clockstats file clockstats type day enable
