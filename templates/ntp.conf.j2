@@ -1,41 +1,45 @@
 ## Access Control
 
 # Always listen for upstream server(s).
-interface listen all
+interface       listen all
 
 {% if inventory_hostname in groups['time-server'] %}
 # Server:  Allow service and query packets from anywhere:
-restrict default nomodify nopeer limited
+restrict        default nomodify nopeer limited
 {% else %}
 # Client:  Allow service packets from upstream server(s):
-restrict default ignore
-restrict {{ groups['time-server'][0] }}.{{ domain }} nomodify nopeer noquery limited
-restrict pool.ntp.org nomodify nopeer noquery limited
-restrict 0.debian.pool.ntp.org nomodify nopeer noquery limited
-restrict 1.debian.pool.ntp.org nomodify nopeer noquery limited
-restrict 2.debian.pool.ntp.org nomodify nopeer noquery limited
-restrict 3.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict        default ignore
+{% for server in groups['time-server'] %}
+restrict        {{ server }}.{{ domain }} nomodify nopeer noquery limited
+{% endfor %}
+restrict        pool.ntp.org nomodify nopeer noquery limited
+restrict        0.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict        1.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict        2.debian.pool.ntp.org nomodify nopeer noquery limited
+restrict        3.debian.pool.ntp.org nomodify nopeer noquery limited
 {% endif %}
 
 # Unrestrict local access:
-restrict 127.0.0.1
-restrict ::1
+restrict        127.0.0.1
+restrict        ::1
 
 
 ## Upstream server(s):
 {% for server in groups['time-server'] %}
-server {{ server }}.{{ domain }} iburst
+{% if server != inventory_hostname %}
+server          {{ server }}.{{ domain }} iburst
+{% endif %}
 {% endfor %}
-pool pool.ntp.org burst
-pool 0.debian.pool.ntp.org burst
-pool 1.debian.pool.ntp.org burst
-pool 2.debian.pool.ntp.org burst
-pool 3.debian.pool.ntp.org burst
+pool            pool.ntp.org burst
+pool            0.debian.pool.ntp.org burst
+pool            1.debian.pool.ntp.org burst
+pool            2.debian.pool.ntp.org burst
+pool            3.debian.pool.ntp.org burst
 
 
 ## Other options:
-driftfile /var/lib/ntp/ntp.drift
-statistics loopstats peerstats clockstats
-filegen loopstats file loopstats type day enable
-filegen peerstats file peerstats type day enable
-filegen clockstats file clockstats type day enable
+driftfile       /var/lib/ntp/ntp.drift
+statistics      loopstats peerstats clockstats
+filegen         loopstats file loopstats type day enable
+filegen         peerstats file peerstats type day enable
+filegen         clockstats file clockstats type day enable
