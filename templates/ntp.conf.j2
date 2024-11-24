@@ -25,16 +25,17 @@ restrict        ::1
 
 
 ## Upstream server(s):
-{% for server in groups['time-server'] %}
-{% if server != inventory_hostname %}
-server          {{ server }}.{{ domain }} iburst
-{% endif %}
-{% endfor %}
+{% if inventory_hostname in groups['time-server'] %}
 pool            pool.ntp.org burst
-pool            0.debian.pool.ntp.org burst
-pool            1.debian.pool.ntp.org burst
-pool            2.debian.pool.ntp.org burst
-pool            3.debian.pool.ntp.org burst
+pool            0.debian.pool.ntp.org iburst burst
+pool            1.debian.pool.ntp.org iburst burst
+pool            2.debian.pool.ntp.org iburst burst
+pool            3.debian.pool.ntp.org iburst burst
+{% else %}
+{% for server in groups['time-server'] %}
+server          {{ server }}.{{ domain }} iburst burst
+{% endfor %}
+{% endif %}
 
 
 ## Other options:
@@ -43,3 +44,7 @@ statistics      loopstats peerstats clockstats
 filegen         loopstats file loopstats type day enable
 filegen         peerstats file peerstats type day enable
 filegen         clockstats file clockstats type day enable
+{% if inventory_hostname not in groups['time-server'] %}
+# Set the clock even if it is a big jump.  Might not be necessary if something like step-tickers is implemented.
+# tinker          panic 0
+{% endif %}
