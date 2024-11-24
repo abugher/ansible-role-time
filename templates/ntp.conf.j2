@@ -3,21 +3,25 @@
 # Always listen for upstream server(s).
 interface       listen all
 
+# Restrict connectivity by default.
 {% if inventory_hostname in groups['time-server'] %}
-# Server:  Allow service and query packets from anywhere:
 restrict        default nomodify nopeer limited
 {% else %}
-# Client:  Allow service packets from upstream server(s):
 restrict        default ignore
-{% for server in groups['time-server'] %}
-restrict        {{ server }}.{{ domain }} nomodify nopeer noquery limited
-{% endfor %}
-restrict        pool.ntp.org nomodify nopeer noquery limited
-restrict        0.debian.pool.ntp.org nomodify nopeer noquery limited
-restrict        1.debian.pool.ntp.org nomodify nopeer noquery limited
-restrict        2.debian.pool.ntp.org nomodify nopeer noquery limited
-restrict        3.debian.pool.ntp.org nomodify nopeer noquery limited
 {% endif %}
+{% if False %}
+# From observation:  Don't bother configuring restrictions by hostname.  Any
+# hostname specified as a server/pool will be resolved, and any resulting IP
+# address will be added as a server.  Restrictions specified by hostname will
+# not apply, but default (most restrictive) will apply.
+#
+# Instead, specify "source" as the address to write a line configuring all
+# sources (servers), regardless of address or address type.
+#
+# On Devuan Daedalus, "restrict source" is not mentioned in the manual for
+# ntp.conf as supplied by the ntpsec package.  It seems to work, though.
+{% endif %}
+restrict        source nomodify nopeer noquery limited
 
 # Unrestrict local access:
 restrict        127.0.0.1
@@ -44,7 +48,3 @@ statistics      loopstats peerstats clockstats
 filegen         loopstats file loopstats type day enable
 filegen         peerstats file peerstats type day enable
 filegen         clockstats file clockstats type day enable
-{% if inventory_hostname not in groups['time-server'] %}
-# Set the clock even if it is a big jump.  Might not be necessary if something like step-tickers is implemented.
-tinker          panic 0
-{% endif %}

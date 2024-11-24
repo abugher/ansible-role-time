@@ -2,6 +2,13 @@
 install_packages:
   - 'cron'
   - 'ntpsec'
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1049424
+create_files:
+  - owner:              'root'
+    group:              'ntpsec'
+    mode:               '0775'
+    path:               '/var/log/ntpsec'
+    state:              'directory'
 template_files:
   - owner:              'root'
     group:              'root'
