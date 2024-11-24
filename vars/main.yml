@@ -31,4 +31,8 @@ symlinks:
     dest:               '/etc/ntp.conf'
 enable_services:        "{{ install_packages }}"
 start_services:         "{{ install_packages }}"
+# WARNING:  On DHCP client systems, /run/ntpsec/ntp.conf.dhcp is generated from
+# /etc/ntpsec/ntp.conf by the DHCP client and used automatically by ntpsec.  As
+# a result, restarting ntpsec will not kick in new configuration until after a
+# DHCP client reload or restart, or until the next "DHCP event".
 restart_services:       "{{ install_packages }}"
