@@ -46,5 +46,5 @@ filegen         peerstats file peerstats type day enable
 filegen         clockstats file clockstats type day enable
 {% if inventory_hostname not in groups['time-server'] %}
 # Set the clock even if it is a big jump.  Might not be necessary if something like step-tickers is implemented.
-# tinker          panic 0
+tinker          panic 0
 {% endif %}
