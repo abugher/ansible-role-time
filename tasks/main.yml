@@ -3,9 +3,11 @@
 - include_tasks:        '../tasks/create_files.yml'
 - include_tasks:        '../tasks/template_files.yml'
 - include_tasks:        '../tasks/symlinks.yml'
+- include_tasks:        '../tasks/lines_in_files.yml'
 - include_tasks:        '../tasks/enable_services.yml'
 - include_tasks:        '../tasks/start_services.yml'
 - include_tasks:        '../tasks/restart_services.yml'
   when:                 symlinks_result.changed 
                         or template_files_result.changed
                         or install_packages_result.changed
+                        or lines_in_files_result.changed
