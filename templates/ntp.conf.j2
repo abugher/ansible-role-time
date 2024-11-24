@@ -23,12 +23,14 @@ restrict ::1
 
 
 ## Upstream server(s):
-server {{ groups['time-server'][0] }}.{{ domain }}
-pool pool.ntp.org iburst
-pool 0.debian.pool.ntp.org iburst
-pool 1.debian.pool.ntp.org iburst
-pool 2.debian.pool.ntp.org iburst
-pool 3.debian.pool.ntp.org iburst
+{% for server in groups['time-server'] %}
+server {{ server }}.{{ domain }} iburst
+{% endfor %}
+pool pool.ntp.org burst
+pool 0.debian.pool.ntp.org burst
+pool 1.debian.pool.ntp.org burst
+pool 2.debian.pool.ntp.org burst
+pool 3.debian.pool.ntp.org burst
 
 
 ## Other options:
