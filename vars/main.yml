@@ -1,13 +1,21 @@
 ---
+gather_subset_of_facts:
+  - 'distribution'
+daemon_name:            "{{ 'ntp' if 'Ubuntu' == ansible_facts['distribution'] else 'ntpsec' }}"
+group:                  "{{ daemon_name }}"
 install_packages:
-  - 'cron'
   - 'ntpsec'
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1049424
 create_files:
   - owner:              'root'
-    group:              'ntpsec'
+    group:              "{{ group }}"
     mode:               '0775'
     path:               '/var/log/ntpsec'
+    state:              'directory'
+  - owner:              'root'
+    group:              "{{ group }}"
+    mode:               '0775'
+    path:               '/etc/ntpsec'
     state:              'directory'
 template_files:
   - owner:              'root'
@@ -36,9 +44,10 @@ lines_in_files:
   # deployment, even after restarting the ntpsec service is restarted, until
   # "the next DHCP event".  The client also just doesn't need NTP server
   # information from DHCP; it is being supplied by this role.
-  - path:               '/etc/default/ntpsec'
+  - path:               "/etc/default/{{ daemon_name }}"
     line:               "IGNORE_DHCP='yes'"
     regexp:             '^ *IGNORE_DHCP='
-enable_services:        "{{ install_packages }}"
-start_services:         "{{ install_packages }}"
-restart_services:       "{{ install_packages }}"
+enable_services:
+  - "{{ daemon_name }}"
+start_services:         "{{ enable_services }}"
+restart_services:       "{{ enable_services }}"
