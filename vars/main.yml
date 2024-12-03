@@ -1,6 +1,4 @@
 ---
-gather_subset_of_facts:
-  - 'distribution'
 install_packages:
   - 'ntpsec'
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1049424
