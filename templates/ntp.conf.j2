@@ -29,20 +29,22 @@ restrict        ::1
 
 
 ## Upstream server(s):
+{% if inventory_hostname in groups['time-server'] or inventory_hostname in groups['external-dns-targets'] %}
+pool            pool.ntp.org                    iburst burst
+pool            0.debian.pool.ntp.org           iburst burst
+pool            1.debian.pool.ntp.org           iburst burst
+pool            2.debian.pool.ntp.org           iburst burst
+pool            3.debian.pool.ntp.org           iburst burst
 {% if inventory_hostname in groups['time-server'] %}
-pool            pool.ntp.org burst
-pool            0.debian.pool.ntp.org iburst burst
-pool            1.debian.pool.ntp.org iburst burst
-pool            2.debian.pool.ntp.org iburst burst
-pool            3.debian.pool.ntp.org iburst burst
 {% for server in groups['time-server'] %}
 {% if server != inventory_hostname %}
-peer            {{ server }}.{{ domain }} iburst burst
+peer            {{ server }}.{{ domain }}       iburst burst
 {% endif %}
 {% endfor %}
+{% endif %}
 {% else %}
 {% for server in groups['time-server'] %}
-server          {{ server }}.{{ domain }} iburst burst
+server          {{ server }}.{{ domain }}       iburst burst
 {% endfor %}
 {% endif %}
 
