@@ -45,5 +45,5 @@ lines_in_files:
     regexp:             '^ *IGNORE_DHCP='
 enable_services:
   - 'ntpsec'
-start_services:         "{{ enable_services }}"
 restart_services:       "{{ enable_services }}"
+start_services:         "{{ enable_services }}"

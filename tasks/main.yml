@@ -5,9 +5,9 @@
 - include_tasks:        'tasks/common/symlinks.yml'
 - include_tasks:        'tasks/common/lines_in_files.yml'
 - include_tasks:        'tasks/common/enable_services.yml'
-- include_tasks:        'tasks/common/start_services.yml'
 - include_tasks:        'tasks/common/restart_services.yml'
   when:                 symlinks_result.changed 
                         or template_files_result.changed
                         or install_packages_result.changed
                         or lines_in_files_result.changed
+- include_tasks:        'tasks/common/start_services.yml'
