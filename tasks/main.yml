@@ -10,4 +10,5 @@
                         or template_files_result.changed
                         or install_packages_result.changed
                         or lines_in_files_result.changed
+                        or create_files_result.changed
 - include_tasks:        'tasks/common/start_services.yml'

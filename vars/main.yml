@@ -11,6 +11,11 @@ create_files:
   - owner:              'root'
     group:              'ntpsec'
     mode:               '0775'
+    path:               '/var/lib/ntp'
+    state:              'directory'
+  - owner:              'root'
+    group:              'ntpsec'
+    mode:               '0775'
     path:               '/etc/ntpsec'
     state:              'directory'
 template_files:

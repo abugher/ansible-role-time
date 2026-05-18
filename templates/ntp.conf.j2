@@ -5,7 +5,7 @@ interface       listen all
 
 # Restrict connectivity by default.
 {% if inventory_hostname in groups['time-server'] %}
-restrict        default nomodify nopeer limited
+restrict        default nomodify limited
 {% else %}
 restrict        default ignore
 {% endif %}
@@ -21,7 +21,7 @@ restrict        default ignore
 # On Devuan Daedalus, "restrict source" is not mentioned in the manual for
 # ntp.conf as supplied by the ntpsec package.  It seems to work, though.
 {% endif %}
-restrict        source nomodify nopeer noquery limited
+restrict        source nomodify noquery limited
 
 # Unrestrict local access:
 restrict        127.0.0.1
@@ -38,7 +38,7 @@ pool            3.debian.pool.ntp.org           iburst burst
 {% if inventory_hostname in groups['time-server'] %}
 {% for server in groups['time-server'] %}
 {% if server != inventory_hostname %}
-peer            {{ server }}.{{ domain }}       iburst burst
+server          {{ server }}.{{ domain }}       iburst burst
 {% endif %}
 {% endfor %}
 {% endif %}
